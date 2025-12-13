@@ -1,0 +1,5 @@
+aws_region     = "us-east-1"
+project_name   = "logistix"
+environment    = "dev"
+openai_api_key = "sk-your-openai-api-key-here"
+sender_email   = "briefing@yourdomain.com"

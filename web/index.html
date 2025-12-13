@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGISTIX MORNING BRIEF</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="intro-modal" class="intro-modal">
+        <div class="intro-content">
+            <h1>LOGISTIX MORNING BRIEF</h1>
+            <p>Daily logistics intelligence for truckers and dispatchers.</p>
+            <ul>
+                <li>Real-time fuel prices and freight rates</li>
+                <li>Live traffic alerts across major corridors</li>
+                <li>Weather conditions impacting routes</li>
+                <li>AI-powered market insights</li>
+            </ul>
+            <p class="intro-price">$1/month | Delivered daily at 6:00 AM ET</p>
+            <button id="intro-close" class="intro-btn">VIEW DASHBOARD</button>
+            <p style="margin-top:2rem;font-size:0.65rem;color:#666;">&copy; Jonathan Schimpf</p>
+        </div>
+    </div>
+
+    <header>
+        <div id="timezones" style="font-size:0.75rem;color:#999;margin-bottom:0.5rem;"></div>
+        <h1>LOGISTIX MORNING BRIEF</h1>
+        <p id="date">LOADING...</p>
+        <p id="risk" style="margin-top:0.5rem;font-size:0.875rem;"></p>
+        <div class="flipboard" id="flipboard" aria-live="polite" aria-label="Live briefing ticker"></div>
+    </header>
+
+    <main>
+        <section class="insight">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="margin:0;">LOGISTIX INSIGHT</h2>
+                <span id="insight-timestamp" style="font-size:0.7rem;color:#666;"></span>
+            </div>
+            <p id="ai-insight">Loading today's briefing...</p>
+        </section>
+
+        <div class="grid">
+            <section class="card">
+                <h2>
+                    <span>FUEL PRICES</span>
+                    <span class="live-indicator delayed"><span class="live-dot"></span>DELAYED</span>
+                </h2>
+                <div class="card-content" id="fuel-data"></div>
+            </section>
+
+            <section class="card">
+                <h2>
+                    <span>FREIGHT RATES</span>
+                    <span class="live-indicator delayed"><span class="live-dot"></span>DELAYED</span>
+                </h2>
+                <div class="card-content" id="freight-data"></div>
+            </section>
+
+            <section class="card">
+                <h2>
+                    <span>TRAFFIC ALERTS</span>
+                    <span class="live-indicator"><span class="live-dot"></span>LIVE</span>
+                </h2>
+                <div class="card-content" id="traffic-data"></div>
+            </section>
+
+            <section class="card">
+                <h2>
+                    <span>WEATHER CONDITIONS</span>
+                    <span class="live-indicator"><span class="live-dot"></span>LIVE</span>
+                </h2>
+                <div class="card-content" id="weather-data"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>SUBSCRIBE FOR $1/MONTH | DAILY DELIVERY 06:00 ET</p>
+        <button id="subscribe-btn">SUBSCRIBE NOW</button>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

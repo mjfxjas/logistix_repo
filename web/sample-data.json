@@ -1,0 +1,38 @@
+{
+  "date": "2024-01-15",
+  "ai_insight": "Diesel prices dropped 3.2% this week while spot rates increased 4.1% in the Southeast corridor. Strong demand for dry van capacity suggests favorable conditions for owner-operators. Weather remains clear across major routes, but monitor I-80 for potential snow midweek.",
+  "fuel": {
+    "national_avg": 3.45,
+    "national_change": -1.2,
+    "diesel": 4.12,
+    "diesel_change": -3.2
+  },
+  "freight": {
+    "dry_van": 2.15,
+    "dry_van_change": 4.1,
+    "reefer": 2.68,
+    "reefer_change": 2.3,
+    "flatbed": 2.92,
+    "flatbed_change": 1.8
+  },
+  "traffic": [
+    {
+      "location": "I-95 North, Exit 42-48",
+      "reason": "Construction - Right lane closed until 3 PM"
+    },
+    {
+      "location": "I-40 West, Mile 215",
+      "reason": "Accident - 2 hour delay expected"
+    }
+  ],
+  "weather": [
+    {
+      "corridor": "I-80 (NE-IA)",
+      "condition": "Snow expected Wed-Thu"
+    },
+    {
+      "corridor": "I-95 (NC-VA)",
+      "condition": "Clear conditions"
+    }
+  ]
+}
