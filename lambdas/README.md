@@ -54,13 +54,14 @@ Replace mock data with real APIs:
 
 Set in Terraform or AWS Console:
 
-- `RAW_DATA_TABLE` - DynamoDB table for raw data
-- `BRIEFS_TABLE` - DynamoDB table for daily briefs
-- `SUBSCRIBERS_TABLE` - DynamoDB table for subscribers
-- `DATA_BUCKET` - S3 bucket for JSON files
-- `OPENAI_API_KEY` - OpenAI API key
-- `SENDER_EMAIL` - Verified SES email address
-- `DASHBOARD_URL` - CloudFront URL
+- Core stores: `RAW_DATA_TABLE`, `BRIEFS_TABLE`, `SUBSCRIBERS_TABLE`, `DATA_BUCKET`
+- AI: `OPENAI_API_KEY` (local fallback) or SSM SecureString `/logistix/openai-api-key`
+- Ingestors:
+  - Fuel: `EIA_API_KEY`
+  - Freight: optional vendor keys if added
+  - Traffic: `TRAFFIC_511_KEY`, `AZ_511_KEY`, `UTAH_511_KEY`, `NY_511_KEY`
+  - Economic data: `FRED_API_KEY_PARAM_NAME` (SSM parameter name holding the FRED key)
+- Email/web: `SENDER_EMAIL` (SES verified), `DASHBOARD_URL` (CloudFront)
 
 ## Data Flow
 

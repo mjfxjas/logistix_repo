@@ -1,6 +1,6 @@
 # Logistics Morning Briefing
 
-Daily logistics intelligence delivered to truck drivers and dispatchers for $1/month.
+Daily logistics intelligence delivered to truck drivers and dispatchers.
 
 ## Quick Start
 
@@ -48,7 +48,7 @@ aws dynamodb put-item \
 ## Architecture
 
 ```
-EventBridge (5am) → 4 Ingestors → DynamoDB (raw)
+EventBridge (5am) → Ingestors (fuel, freight, traffic, weather, border waits, econ, air/sea) → DynamoDB (raw)
                                        ↓
                                   Aggregator → OpenAI
                                        ↓
@@ -80,8 +80,6 @@ For 1,000 subscribers:
 - S3/CloudFront: ~$2/month
 
 **Total: ~$26/month operating cost**
-**Revenue: $1,000/month**
-**Margin: 97%**
 
 ## API Integration
 

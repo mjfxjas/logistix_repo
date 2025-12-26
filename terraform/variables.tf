@@ -40,3 +40,10 @@ variable "traffic_511_key" {
   sensitive   = true
   default     = ""
 }
+
+variable "fred_api_key" {
+  description = "FRED API key for economic data"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

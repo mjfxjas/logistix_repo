@@ -1,17 +1,21 @@
+from __future__ import annotations
+
 import json
 import os
 from datetime import datetime
+from typing import Dict, Any, List
 import boto3
+from botocore.exceptions import ClientError
 
-dynamodb = boto3.resource('dynamodb')
-ses = boto3.client('ses')
-
-briefs_table = dynamodb.Table(os.environ['BRIEFS_TABLE'])
-subscribers_table = dynamodb.Table(os.environ['SUBSCRIBERS_TABLE'])
-sender_email = os.environ['SENDER_EMAIL']
-dashboard_url = os.environ['DASHBOARD_URL']
-
-def handler(event, context):
+def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    session = boto3.Session()
+    dynamodb = session.resource('dynamodb')
+    ses = session.client('ses')
+    
+    briefs_table = dynamodb.Table(os.environ['BRIEFS_TABLE'])
+    subscribers_table = dynamodb.Table(os.environ['SUBSCRIBERS_TABLE'])
+    sender_email = os.environ['SENDER_EMAIL']
+    dashboard_url = os.environ['DASHBOARD_URL']
     today = datetime.utcnow().strftime('%Y-%m-%d')
     
     # Get today's brief
@@ -27,30 +31,30 @@ def handler(event, context):
         return {'statusCode': 404, 'body': 'No brief found'}
     
     # Get active subscribers
-    subscribers = get_active_subscribers()
+    subscribers = get_active_subscribers(subscribers_table)
     
     # Send emails
     sent_count = 0
     for subscriber in subscribers:
         try:
-            send_email(subscriber['email'], brief)
+            send_email(ses, subscriber['email'], brief, sender_email, dashboard_url)
             sent_count += 1
-        except Exception as e:
+        except ClientError as e:
             print(f"Failed to send to {subscriber['email']}: {e}")
     
     return {'statusCode': 200, 'body': json.dumps(f'Sent {sent_count} emails')}
 
-def get_active_subscribers():
+def get_active_subscribers(subscribers_table: Any) -> List[Dict[str, Any]]:
     response = subscribers_table.scan(
         FilterExpression='attribute_exists(active) AND active = :true',
         ExpressionAttributeValues={':true': True}
     )
     return response.get('Items', [])
 
-def send_email(to_email, brief):
-    html_body = render_email_html(brief)
+def send_email(ses_client: Any, to_email: str, brief: Dict[str, Any], sender_email: str, dashboard_url: str) -> None:
+    html_body = render_email_html(brief, dashboard_url)
     
-    ses.send_email(
+    ses_client.send_email(
         Source=sender_email,
         Destination={'ToAddresses': [to_email]},
         Message={
@@ -67,19 +71,30 @@ def send_email(to_email, brief):
         }
     )
 
-def render_email_html(brief):
+def render_email_html(brief: Dict[str, Any], dashboard_url: str) -> str:
+    traffic = brief.get('traffic') or {}
+    alerts = (traffic.get('alerts') if isinstance(traffic, dict) else traffic) or []
+    alerts = alerts[:3]
+
+    weather = brief.get('weather') or {}
+    forecasts = (weather.get('forecasts') if isinstance(weather, dict) else weather) or []
+    forecasts = forecasts[:3]
+
     traffic_html = ''.join([
         f'<div style="background:#1a1a1a;padding:12px;margin:8px 0;border-left:3px solid #fff;">'
-        f'<strong>{alert["location"]}</strong><br>'
-        f'<span style="color:#aaa;">{alert["reason"]}</span></div>'
-        for alert in brief.get('traffic', [])[:3]
+        f'<strong>{alert.get("location", "Unknown location")}</strong><br>'
+        f'<span style="color:#aaa;">{alert.get("reason", "No details")}</span></div>'
+        for alert in alerts
     ]) or '<p>No major alerts</p>'
     
     weather_html = ''.join([
         f'<div style="padding:8px 0;border-bottom:1px solid #2a2a3e;">'
-        f'<strong>{w["corridor"]}</strong>: {w["condition"]}</div>'
-        for w in brief.get('weather', [])[:3]
+        f'<strong>{w.get("corridor", "Corridor")}</strong>: {w.get("condition", "Normal")}</div>'
+        for w in forecasts
     ]) or '<p>No major disruptions</p>'
+
+    fuel = brief.get('fuel', {})
+    freight = brief.get('freight', {})
     
     return f"""
 <!DOCTYPE html>
@@ -95,11 +110,11 @@ def render_email_html(brief):
             <p style="margin:10px 0 0;color:#999;font-size:12px;letter-spacing:0.05em;">{brief['date'].upper()}</p>
         </div>
         
-        <div style="background:#000;padding:20px;border:2px solid #fff;border-top:none;">
-            <div style="background:#fff;color:#000;padding:20px;margin-bottom:20px;">
-                <h2 style="margin:0 0 15px;font-size:14px;letter-spacing:0.1em;font-weight:700;">AI ANALYSIS</h2>
-                <p style="margin:0;line-height:1.6;font-size:13px;">{brief.get('ai_insight', '')}</p>
-            </div>
+            <div style="background:#000;padding:20px;border:2px solid #fff;border-top:none;">
+                <div style="background:#fff;color:#000;padding:20px;margin-bottom:20px;">
+                    <h2 style="margin:0 0 15px;font-size:14px;letter-spacing:0.1em;font-weight:700;">AI ANALYSIS</h2>
+                    <p style="margin:0;line-height:1.6;font-size:13px;">{brief.get('ai_insight', '')}</p>
+                </div>
             
             <table style="width:100%;border-collapse:collapse;margin-bottom:15px;">
                 <tr>
@@ -107,7 +122,7 @@ def render_email_html(brief):
                         <h3 style="margin:0;padding:10px;font-size:13px;letter-spacing:0.1em;font-weight:700;background:#fff;color:#000;border-bottom:2px solid #000;">FUEL PRICES</h3>
                         <div style="padding:12px;border-bottom:1px solid #333;font-size:12px;">
                             <span style="color:#999;font-size:11px;letter-spacing:0.05em;">DIESEL:</span>
-                            <strong style="float:right;">${brief['fuel']['diesel']:.2f}/GAL <span style="color:{'#00ff00' if brief['fuel']['diesel_change'] < 0 else '#ff0000'};">{brief['fuel']['diesel_change']:+.1f}%</span></strong>
+                            <strong style="float:right;">${fuel.get('diesel', 0):.2f}/GAL <span style="color:{'#00ff00' if fuel.get('diesel_change', 0) < 0 else '#ff0000'};">{fuel.get('diesel_change', 0):+.1f}%</span></strong>
                         </div>
                     </td>
                 </tr>
@@ -119,11 +134,11 @@ def render_email_html(brief):
                         <h3 style="margin:0;padding:10px;font-size:13px;letter-spacing:0.1em;font-weight:700;background:#fff;color:#000;border-bottom:2px solid #000;">FREIGHT RATES</h3>
                         <div style="padding:12px;border-bottom:1px solid #333;font-size:12px;">
                             <span style="color:#999;font-size:11px;letter-spacing:0.05em;">DRY VAN:</span>
-                            <strong style="float:right;">${brief['freight']['dry_van']:.2f}/MI <span style="color:{'#ff0000' if brief['freight']['dry_van_change'] > 0 else '#00ff00'};">{brief['freight']['dry_van_change']:+.1f}%</span></strong>
+                            <strong style="float:right;">${freight.get('dry_van', 0):.2f}/MI <span style="color:{'#ff0000' if freight.get('dry_van_change', 0) > 0 else '#00ff00'};">{freight.get('dry_van_change', 0):+.1f}%</span></strong>
                         </div>
                         <div style="padding:12px;font-size:12px;">
                             <span style="color:#999;font-size:11px;letter-spacing:0.05em;">REEFER:</span>
-                            <strong style="float:right;">${brief['freight']['reefer']:.2f}/MI <span style="color:{'#ff0000' if brief['freight']['reefer_change'] > 0 else '#00ff00'};">{brief['freight']['reefer_change']:+.1f}%</span></strong>
+                            <strong style="float:right;">${freight.get('reefer', 0):.2f}/MI <span style="color:{'#ff0000' if freight.get('reefer_change', 0) > 0 else '#00ff00'};">{freight.get('reefer_change', 0):+.1f}%</span></strong>
                         </div>
                     </td>
                 </tr>

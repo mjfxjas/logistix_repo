@@ -1,38 +1,64 @@
 {
-  "date": "2024-01-15",
-  "ai_insight": "Diesel prices dropped 3.2% this week while spot rates increased 4.1% in the Southeast corridor. Strong demand for dry van capacity suggests favorable conditions for owner-operators. Weather remains clear across major routes, but monitor I-80 for potential snow midweek.",
+  "date": "2025-01-02",
+  "ai_insight": "Diesel prices remain stable at $4.12/gal with moderate freight demand. Traffic conditions are clear across major corridors with no significant weather disruptions expected.",
   "fuel": {
     "national_avg": 3.45,
-    "national_change": -1.2,
+    "national_change": -0.2,
     "diesel": 4.12,
-    "diesel_change": -3.2
+    "diesel_change": 0.1,
+    "news": [
+      {"title": "Diesel prices hold steady amid stable crude markets", "url": "#"},
+      {"title": "Weekly petroleum status report released", "url": "#"}
+    ]
+  },
+  "fuel_score": {
+    "status": "STABLE",
+    "analysis": "Prices holding steady - no immediate action needed"
   },
   "freight": {
     "dry_van": 2.15,
-    "dry_van_change": 4.1,
+    "dry_van_change": 1.2,
     "reefer": 2.68,
-    "reefer_change": 2.3,
+    "reefer_change": 0.8,
     "flatbed": 2.92,
-    "flatbed_change": 1.8
+    "flatbed_change": -0.5,
+    "news": [
+      {"title": "Freight demand shows seasonal patterns", "url": "#"}
+    ]
   },
-  "traffic": [
-    {
-      "location": "I-95 North, Exit 42-48",
-      "reason": "Construction - Right lane closed until 3 PM"
-    },
-    {
-      "location": "I-40 West, Mile 215",
-      "reason": "Accident - 2 hour delay expected"
-    }
-  ],
-  "weather": [
-    {
-      "corridor": "I-80 (NE-IA)",
-      "condition": "Snow expected Wed-Thu"
-    },
-    {
-      "corridor": "I-95 (NC-VA)",
-      "condition": "Clear conditions"
-    }
-  ]
+  "freight_score": {
+    "status": "STEADY",
+    "analysis": "Balanced market conditions"
+  },
+  "traffic": {
+    "alerts": [
+      {"location": "I-95 North - VA", "reason": "Construction delays", "severity": "moderate"},
+      {"location": "I-10 East - TX", "reason": "Heavy traffic", "severity": "low"}
+    ],
+    "news": [
+      {"title": "Major highway construction projects underway", "url": "#"}
+    ]
+  },
+  "traffic_score": {
+    "status": "MODERATE",
+    "analysis": "Some delays expected - plan alternate routes"
+  },
+  "weather": {
+    "forecasts": [
+      {"corridor": "I-95 Northeast", "condition": "Clear conditions", "severity": "low"},
+      {"corridor": "I-80 Midwest", "condition": "Light snow possible", "severity": "moderate"}
+    ],
+    "news": [
+      {"title": "Winter weather preparedness tips for drivers", "url": "#"}
+    ]
+  },
+  "weather_score": {
+    "status": "NORMAL",
+    "analysis": "Conditions favorable for operations"
+  },
+  "disruption_risk": {
+    "level": "LOW",
+    "reason": "Minor conditions",
+    "top_conditions": ["Clear conditions (I-95)", "Light snow (I-80)"]
+  }
 }

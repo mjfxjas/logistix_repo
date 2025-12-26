@@ -1,20 +1,24 @@
+from __future__ import annotations
+
 import json
 import os
 from datetime import datetime
+from typing import Dict, Any
 import boto3
 import urllib.request
 import urllib.error
+from botocore.exceptions import ClientError
 from news_fetcher import get_news_items
-
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table(os.environ['RAW_DATA_TABLE'])
 
 MOCK_NEWS = [
     {'title': 'Diesel prices hold steady amid stable crude markets', 'url': 'https://www.eia.gov'},
     {'title': 'Weekly petroleum status report released', 'url': 'https://www.eia.gov'}
 ]
 
-def handler(event, context):
+def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    session = boto3.Session()
+    dynamodb = session.resource('dynamodb')
+    table = dynamodb.Table(os.environ['RAW_DATA_TABLE'])
     today = datetime.utcnow().strftime('%Y-%m-%d')
     fuel_data = fetch_fuel_prices()
     
@@ -27,7 +31,7 @@ def handler(event, context):
     
     return {'statusCode': 200, 'body': json.dumps('Fuel data ingested')}
 
-def fetch_fuel_prices():
+def fetch_fuel_prices() -> Dict[str, Any]:
     api_key = os.environ.get('EIA_API_KEY')
     news = get_news_items('https://www.eia.gov/rss/petroleum.xml', 3) or MOCK_NEWS
     
@@ -61,7 +65,7 @@ def fetch_fuel_prices():
                 'regions': {'northeast': 3.52, 'midwest': 3.38, 'south': 3.41, 'west': 3.58},
                 'news': news
             }
-    except Exception as e:
+    except (urllib.error.URLError, json.JSONDecodeError, KeyError) as e:
         print(f"EIA API error: {e}")
         return {
             'national_avg': 3.45,
