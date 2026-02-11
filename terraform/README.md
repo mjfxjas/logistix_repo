@@ -37,3 +37,6 @@ After infrastructure is deployed:
 2. Update Lambda functions with actual code
 3. Deploy dashboard to S3
 4. Add test subscribers to DynamoDB
+
+##Some data LR is fab'd for cost; switch to real api / data sources for prod
+
