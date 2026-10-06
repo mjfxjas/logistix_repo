@@ -83,6 +83,18 @@ Update the respective Lambda functions in `lambdas/ingestor-*/index.py`
 
 ## Testing
 
+### Offline Dashboard Regression Tests
+
+```bash
+node --test tests/*.test.cjs
+```
+
+Tests stub network requests and cover panel rendering plus HTTP, network, and
+invalid-JSON failures. Failed loads clear metrics and show an unavailable state;
+the dashboard does not substitute randomized data for a failed briefing.
+Some ingestors still use mock data, as described under API Integration.
+
+
 ### Test Lambda Locally
 ```bash
 cd lambdas/ingestor-fuel

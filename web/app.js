@@ -353,7 +353,7 @@ async function loadBriefing() {
         renderBriefing(data);
     } catch (error) {
         console.error('Failed to load briefing:', error);
-        renderBriefing(generateDummyBriefing());
+        renderError();
     }
 }
 
@@ -547,6 +547,9 @@ function formatDate(dateStr) {
 }
 
 function renderError() {
+    document.getElementById('date').textContent = 'BRIEFING UNAVAILABLE';
+    document.getElementById('risk').textContent = 'DISRUPTION RISK: UNKNOWN';
+    document.getElementById('insight-timestamp').textContent = '';
     document.getElementById('ai-insight').textContent = 'UNABLE TO LOAD BRIEFING. CHECK BACK LATER.';
     document.getElementById('fuel-data').innerHTML = '<p class="loading">DATA UNAVAILABLE</p>';
     document.getElementById('freight-data').innerHTML = '<p class="loading">DATA UNAVAILABLE</p>';
@@ -557,7 +560,7 @@ function renderError() {
     document.getElementById('air-traffic-data').innerHTML = '<p class="loading">DATA UNAVAILABLE</p>';
     document.getElementById('ais-data-data').innerHTML = '<p class="loading">DATA UNAVAILABLE</p>';
     document.getElementById('global-events-data').innerHTML = '<p class="loading">DATA UNAVAILABLE</p>';
-    startFlipboard(defaultFlips);
+    startFlipboard(['BRIEFING DATA UNAVAILABLE']);
 }
 
 // Intro modal logic
