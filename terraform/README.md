@@ -26,7 +26,7 @@
 - **S3**: Dashboard bucket (public) + data bucket (private)
 - **CloudFront**: CDN for dashboard
 - **DynamoDB**: 3 tables (raw_data, daily_briefs, subscribers)
-- **Lambda**: 6 functions (4 ingestors + aggregator + email sender)
+- **Lambda**: Ingestors, aggregator, and email sender
 - **EventBridge**: 2 schedules (5am ingestion, 6am email)
 - **IAM**: Lambda execution role with necessary permissions
 
@@ -38,5 +38,6 @@ After infrastructure is deployed:
 3. Deploy dashboard to S3
 4. Add test subscribers to DynamoDB
 
-##Some data LR is fab'd for cost; switch to real api / data sources for prod
+## Data Sources
 
+Some ingestors use mock data. Configure and verify source integrations before using the briefing operationally.

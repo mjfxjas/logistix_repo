@@ -1,6 +1,6 @@
 # Lambda Functions
 
-All Lambda functions for the logistics briefing pipeline.
+Ingestors, aggregator, and email sender for the logistics briefing pipeline.
 
 ## Structure
 
@@ -26,17 +26,17 @@ lambdas/
 
 ## Testing Locally
 
-```python
+```bash
 # Test individual function
 cd ingestor-fuel
 python3 -c "from index import handler; print(handler({}, {}))"
 ```
 
-## API Integration TODOs
+## Data Sources
 
-Replace mock data with real APIs:
+Source integrations include mock data and fallbacks. Check the individual ingestor before using its output:
 
-1. **Fuel** - EIA API (requires free API key)
+1. **Fuel** - EIA API (requires an API key)
    - https://www.eia.gov/opendata/
 
 2. **Freight** - Options:
@@ -44,10 +44,10 @@ Replace mock data with real APIs:
    - Truckstop.com API (paid)
    - FreightWaves SONAR (paid)
 
-3. **Traffic** - DOT 511 APIs (free)
+3. **Traffic** - DOT 511 APIs
    - https://www.fhwa.dot.gov/trafficinfo/
 
-4. **Weather** - Open-Meteo (free, no key required)
+4. **Weather** - Open-Meteo
    - https://open-meteo.com/en/docs
 
 ## Environment Variables
