@@ -392,11 +392,6 @@ function renderBriefing(data) {
     renderAirTraffic(data.air_traffic);
     renderAISData(data.ais_data);
     renderGlobalEvents(data.global_events);
-    renderBorderWaitTimes(data.border_wait_times);
-    renderEconomicData(data.economic_data);
-    renderAirTraffic(data.air_traffic);
-    renderAisData(data.ais_data);
-    renderGlobalEvents(data.global_events);
 
     startFlipboard(buildFlipMessages(data));
 }
@@ -531,95 +526,6 @@ function renderWeather(weatherData, score) {
     }
     
     document.getElementById('weather-data').innerHTML = html;
-}
-
-function renderBorderWaitTimes(data) {
-    const el = document.getElementById('border-wait-times-data');
-    if (!data || data.length === 0) {
-        el.innerHTML = '<p class="loading">NO DATA</p>';
-        return;
-    }
-    let html = data.map(port => `
-        <div class="metric">
-            <span class="metric-label">${port.port_name}</span>
-            <span class="metric-value">${port.standard_lanes_wait_minutes} MIN</span>
-        </div>
-    `).join('');
-    el.innerHTML = html;
-}
-
-function renderEconomicData(data) {
-    const el = document.getElementById('economic-data-data');
-    if (!data || data.length === 0) {
-        el.innerHTML = '<p class="loading">NO DATA</p>';
-        return;
-    }
-    let html = data.map(series => {
-        const value = series.series_id.includes('GAS') || series.series_id.includes('OIL') 
-            ? `$${parseFloat(series.value).toFixed(2)}` 
-            : parseFloat(series.value).toFixed(2);
-        return `
-            <div class="metric">
-                <span class="metric-label">${series.series_name}</span>
-                <span class="metric-value">${value}</span>
-            </div>
-        `;
-    }).join('');
-    el.innerHTML = html;
-}
-
-function renderAirTraffic(data) {
-    const el = document.getElementById('air-traffic-data');
-    const totalFlights = data?.total_flights_in_bbox || 0;
-    if (!totalFlights) {
-        el.innerHTML = '<p class="loading">NO FLIGHTS</p>';
-        return;
-    }
-    el.innerHTML = `
-        <div class="metric">
-            <span class="metric-label">FLIGHTS IN U.S. AIRSPACE</span>
-            <span class="metric-value">${totalFlights.toLocaleString()}</span>
-        </div>
-        <p style="font-size:0.7rem;color:#666;text-align:center;padding:0.5rem 1rem;">
-            Displaying a summary of total flights. Detailed view coming soon.
-        </p>
-    `;
-}
-
-function renderAisData(data) {
-    const el = document.getElementById('ais-data-data');
-    const sampleSize = data?.length || 0;
-    if (sampleSize === 0) {
-        el.innerHTML = '<p class="loading">NO DATA</p>';
-        return;
-    }
-    el.innerHTML = `
-        <div class="metric">
-            <span class="metric-label">VESSELS SAMPLED (U.S.)</span>
-            <span class="metric-value">${sampleSize}</span>
-        </div>
-        <p style="font-size:0.7rem;color:#666;text-align:center;padding:0.5rem 1rem;">
-            Displaying a sample of vessels from ${data[0]?.BaseDateTime?.split('T')[0] || 'yesterday'}.
-        </p>
-    `;
-}
-
-function renderGlobalEvents(data) {
-    const el = document.getElementById('global-events-data');
-    if (!data || data.length === 0) {
-        el.innerHTML = '<p class="loading">NO MAJOR EVENTS</p>';
-        return;
-    }
-    let html = data.map(event => `
-        <div class="alert">
-            <div class="alert-location" style="color:#ffaa00;">${event.Location}, ${event.Country}</div>
-            <div class="alert-reason" style="font-size:0.7rem">
-                Goldstein Scale: ${event.GoldsteinScale.toFixed(2)}
-                <a href="${event.SourceURL}" target="_blank" style="color:#999;text-decoration:none;margin-left:0.5rem;">&#128279;</a>
-            </div>
-        </div>
-    `).join('');
-    el.innerHTML = html;
 }
 
 function renderChange(change) {
